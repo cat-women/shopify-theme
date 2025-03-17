@@ -1,0 +1,69 @@
+{% if cart.item_count > 0 %}
+  <div class="mt-20">
+    <form action="{{ routes.cart_url }}" class="mt-20" method="post" novalidate>
+      <table>
+        <thead>
+          <th>product</th>
+          <th>quantity</th>
+          <th>total price</th>
+        </thead>
+        <tbody>
+          {% for item in cart.items %}
+            <td>
+              <img
+                src="{{ item.image | img_url:"small" }}"
+                alt="{{ item.image.alt }}"
+                height="100"
+                width="100"
+                class="w-20 h-20"
+              >
+              {{ item.title }}
+
+              <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0">Remove</a>
+            </td>
+            <td>
+              <input
+                type="number"
+                name="updates[]"
+                value="{{ item.quantity }} "
+                min="1"
+                id="updates_{{ forloop.index }}"
+              >
+            </td>
+            <td>
+              {{ item.line_price | money }}
+            </td>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div>
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'subtotal' %}
+              <h1>{{ cart.total_price | money }}</h1>
+            {% when 'update_button' %}
+              <button type="submit" name="update">update</button>
+            {% when 'Checkout_button' %}
+              <button type="submit" name="checkout">checkout</button>
+
+            {% else %}
+
+          {% endcase -%}
+        {%- endfor %}
+      </div>
+    </form>
+  </div>
+{% else %}
+  <h1>Nothing in the cart</h1>
+  <a href="{{ routes.all_products_collection_url }}"> Shop here</a>
+{% endif %}
+{% schema %}
+{
+  "name": "Cart",
+  "blocks": [
+    { "type": "subtotal", "limit": 1, "name": "Subtotal" },
+    { "type": "update_button", "limit": 1, "name": "Update Button" },
+    { "type": "Checkout_button", "limit": 1, "name": "Checkout Button" }
+  ]
+}
+{% endschema %}

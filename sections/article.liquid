@@ -1,0 +1,95 @@
+{%- for blocks in section.blocks -%}
+  {%- case blocks.type -%}
+    {%- when article_title -%}
+      <h1>{{ article.title }}</h1>
+
+    {%- when article_author -%}
+      <h1>{{ article.author }}</h1>
+
+    {%- when featured_image -%}
+      <img src="{{ article.image | img_url:'large' }}" alt="{{ article.image.alt }}" height="300" width="300">
+
+    {%- else -%}
+  {%- endcase -%}
+{%- endfor -%}
+<small> {{ article.content }}</small>
+
+{%- if blog.comments_enabled? -%}
+  <div class="comments">
+    {% if article.comments_count > 0 %}
+      <div>
+        {% paginate article.comments by 12 %}
+          {% for comment in article.comments %}
+            <div>
+              <h1>{{ comment.content }}</h1>
+              <span> {{ comment.author }}</span>
+              <small> {{ comment.created_at | date: format: 'default' }} </small>
+            </div>
+          {% endfor %}
+        {% endpaginate %}
+      </div>
+    {% else %}
+      there is no comments
+    {% endif %}
+  </div>
+{%- endif -%}
+
+<div id="comment_form">
+  {% form 'new_comment', article %}
+    <div class="flex flex-col gap-5 p-4">
+      <div class=" flex flex-row gap-3 w-full">
+        <label> Name </label>
+        <input id="comment_author" name="comment[author]" type="text" class="bg-gray-50">
+      </div>
+      <div class=" flex flex-row gap-3 w-full">
+        <label> Email </label>
+        <input id="comment_author" name="comment[email]" type="text" class="bg-gray-50">
+      </div>
+      <div class=" flex flex-row gap-3 w-full">
+        <label> comment </label>
+        <textarea id="comment_author" name="comment[body]" class="bg-gray-50"></textarea>
+      </div>
+      <input type="submit" class="bg-green-400" value="Post comment">
+    </div>
+  {% endform %}
+</div>
+
+{% schema %}
+{
+  "name": "My article ",
+  "class": "flex flex-col text-center",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "author_enable",
+      "label": "Don youn want to enable atuhor ",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "date_enable",
+      "label": "Don youn want to enable date ",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "article_title",
+      "name": "Title",
+      "limit": 4
+    },
+
+    {
+      "type": "article_author",
+      "name": "Author",
+      "limit": 4
+    },
+
+    {
+      "type": "featured_image",
+      "name": "Image",
+      "limit": 4
+    }
+  ]
+}
+{% endschema %}

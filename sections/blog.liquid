@@ -1,0 +1,27 @@
+{% paginate blog.articles by 3 %}
+  {% for article in blog.articles %}
+    <div>
+      {% if article.image %}
+        <img src="{{ article.image | img_url:"medium" }}" alt="{{ article.image.alt }}" height="300" width="400">
+      {% endif %}
+    </div>
+    <p>{{ article.content | strip_html }}</p>
+    {{ article.author }}
+  {% endfor %}
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Blog",
+  "settings": [
+    {
+      "type": "range",
+      "id": "number_of_blog_post",
+      "min": 0,
+      "max": 8,
+      "label": "Blog post per page",
+      "default": 3
+    }
+  ]
+}
+{% endschema %}
